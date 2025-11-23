@@ -7,15 +7,24 @@ import sys
 
 
 def main():
+    args = sys.argv
+    if len(args) < 2:
+        print("Please use your encounter folder name and try again.")
+        sys.exit(1)
+    file_dir = f"Encounters/{args[1]}/"
+    if not os.path.isdir(file_dir):
+        print("The directory does not exist, please try again.")
+        print(file_dir)
+        sys.exit(1)
     root = tk.Tk()
-    root.title("The Ruby Knight")
+    root.title(args[1])
     root.attributes('-fullscreen', True)
     root.configure(bg='black')
     canvas = tk.Canvas(root, bg='black')
     canvas.pack(fill=tk.BOTH, expand=True)
     phase_tk = tk.IntVar()
     phase_tk.set(1)
-    image = Image.open('Phases/Phase_1.png')
+    image = Image.open(f"{file_dir}Phases/Phase_1.png")
     resized_image = image.resize((1920, 1080), Image.LANCZOS)
     bg_image = ImageTk.PhotoImage(resized_image)
     background_image_ID = canvas.create_image(0, 0, image=bg_image, anchor="nw")
@@ -24,7 +33,7 @@ def main():
     rnd_index_tk.set(1)
     text_id = canvas.create_text(960, 840, text="", font=("Arial", 24), fill="white", anchor='c', tag="Text")
     text_id = canvas.create_text(20, 20, text=rnd_index_tk.get(), font=("Arial", 20), fill="grey", anchor='nw', tag="Round")
-    file = open('Phases/Phase_1.txt')
+    file = open(f"{file_dir}Phases/Phase_1.txt")
     full_text_tk = tk.StringVar()
     full_text_tk.set(file.readlines())
     txt_index_tk = tk.IntVar()
@@ -54,13 +63,13 @@ def main():
         phase = phase_tk.get()
         phase += 1
         super_image = bg_image
-        new_file_text = f"Phases/Phase_{phase}.txt"
-        if os.path.exists(f"Phases/Phase_{phase}.txt"):
+        new_file_text = f"{file_dir}Phases/Phase_{phase}.txt"
+        if os.path.exists(f"{file_dir}Phases/Phase_{phase}.txt"):
             phase_tk.set(phase)
             txt_index_tk.set(0)
-            new_file = open(f"Phases/Phase_{phase}.txt")
+            new_file = open(f"{file_dir}Phases/Phase_{phase}.txt")
             full_text_tk.set(new_file.readlines())
-            image = Image.open(f"Phases/Phase_{phase}.png")
+            image = Image.open(f"{file_dir}Phases/Phase_{phase}.png")
             resized_image = image.resize((1920, 1080), Image.LANCZOS)
             new_bg_image = ImageTk.PhotoImage(resized_image)
             canvas.itemconfigure(background_image_ID, image=new_bg_image)
@@ -85,8 +94,8 @@ def main():
     def rainbow_end_text(event, letter_index=3, index=0, color_index=0):
         delay = 100
         delay2 = 60
-        if os.path.exists('Phases/rainbow_text.txt'):
-            rainbow_txt = open('Phases/rainbow_text.txt')
+        if os.path.exists(f"{file_dir}Phases/rainbow_text.txt"):
+            rainbow_txt = open(f"{file_dir}Phases/rainbow_text.txt")
             rainbow_list = rainbow_txt.readlines()
             rainbow_line = str(rainbow_list[0])
             rainbow_text = rainbow_line.replace('(', '').replace(')', '').replace("'", '').strip("\\n")
