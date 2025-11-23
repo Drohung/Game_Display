@@ -14,10 +14,13 @@ def main():
     canvas.pack(fill=tk.BOTH, expand=True)
     phase_tk = tk.IntVar()
     phase_tk.set(1)
+    image = Image.open('Phases/Phase_1.png')
+    resized_image = image.resize((1920, 1080), Image.LANCZOS)
+    bg_image = ImageTk.PhotoImage(resized_image)
+    canvas.create_image(0, 0, image=bg_image, anchor="nw")
     root.update_idletasks
-    text_id = canvas.create_text(960, 540, text="", font=("Arial", 24), fill="white", anchor='c')
+    text_id = canvas.create_text(960, 840, text="", font=("Arial", 24), fill="white", anchor='c')
     file = open('Phases/Phase_1.txt')
-    rainbow_txt = open('Phases/rainbow_text.txt')
     full_text_tk = tk.StringVar()
     full_text_tk.set(file.readlines())
     txt_index_tk = tk.IntVar()
@@ -54,6 +57,7 @@ def main():
             txt_index_tk.set(0)
             new_file = open(f"Phases/Phase_{phase}.txt")
             full_text_tk.set(new_file.readlines())
+
         else:
             full_text_tk.set('You have emerged victorious!')
     
@@ -69,6 +73,7 @@ def main():
         if root.attributes('-fullscreen') == False:
             root.attributes('-fullscreen', True)
 
+
     def rainbow_end_text(event, letter_index=0, index=0, color_index=0):
         delay = 100
         delay2 = 50
@@ -82,7 +87,7 @@ def main():
                 color = color_list[index % len(color_list)]
                 canvas.itemconfigure(text_id, text='')
                 r_text = rainbow_text[index]
-                text_id == canvas.create_text(490 + ((index + 1) *60), 340, text=r_text, fill=color, font=("DotumChe", 48), anchor="c", tags=(index))
+                text_id == canvas.create_text(490 + ((index + 1) *60), 840, text=r_text, fill=color, font=("DotumChe", 48), anchor="c", tags=(index))
                 canvas.after(delay, lambda: rainbow_end_text(event, letter_index, index+1, color_index+1))
             if index >= len(rainbow_text):
                 if color_index >= len(color_list):
