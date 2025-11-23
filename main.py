@@ -3,6 +3,7 @@ from PIL import ImageTk, Image
 import time
 import linecache
 import os
+import sys
 
 
 def main():
@@ -17,16 +18,17 @@ def main():
     image = Image.open('Phases/Phase_1.png')
     resized_image = image.resize((1920, 1080), Image.LANCZOS)
     bg_image = ImageTk.PhotoImage(resized_image)
-    background_image_id = canvas.create_image(0, 0, image=bg_image, anchor="nw")
+    background_image_ID = canvas.create_image(0, 0, image=bg_image, anchor="nw")
     root.update_idletasks
-    text_id = canvas.create_text(960, 840, text="", font=("Arial", 24), fill="white", anchor='c')
+    rnd_index_tk = tk.IntVar()
+    rnd_index_tk.set(1)
+    text_id = canvas.create_text(960, 840, text="", font=("Arial", 24), fill="white", anchor='c', tag="Text")
+    text_id = canvas.create_text(20, 20, text=rnd_index_tk.get(), font=("Arial", 20), fill="grey", anchor='nw', tag="Round")
     file = open('Phases/Phase_1.txt')
     full_text_tk = tk.StringVar()
     full_text_tk.set(file.readlines())
     txt_index_tk = tk.IntVar()
     txt_index_tk.set(0)
-    rb_index_tk = tk.IntVar()
-    rb_index_tk.set(0)
     keep_image = []
 
     def type_text(event, index=0):
@@ -45,9 +47,8 @@ def main():
         if index < len(text_to_input):
             current_text = ""
             current_text += text_to_input[:index+1]
-            canvas.itemconfigure(text_id, text=current_text)
+            canvas.itemconfigure("Text", text=current_text)
             canvas.after(delay, lambda: type_text(event, index+1))
-            
 
     def phase_change(event, bg_image, keep_image):
         phase = phase_tk.get()
@@ -62,10 +63,9 @@ def main():
             image = Image.open(f"Phases/Phase_{phase}.png")
             resized_image = image.resize((1920, 1080), Image.LANCZOS)
             new_bg_image = ImageTk.PhotoImage(resized_image)
-            canvas.itemconfigure(background_image_id, image=new_bg_image)
+            canvas.itemconfigure(background_image_ID, image=new_bg_image)
             keep_image.append(new_bg_image)
             bg_image = new_bg_image
-
 
         else:
             full_text_tk.set('You have emerged victorious!')
@@ -82,9 +82,9 @@ def main():
         if root.attributes('-fullscreen') == False:
             root.attributes('-fullscreen', True)
 
-    def rainbow_end_text(event, letter_index=1, index=0, color_index=0):
+    def rainbow_end_text(event, letter_index=3, index=0, color_index=0):
         delay = 100
-        delay2 = 50
+        delay2 = 60
         if os.path.exists('Phases/rainbow_text.txt'):
             rainbow_txt = open('Phases/rainbow_text.txt')
             rainbow_list = rainbow_txt.readlines()
@@ -93,34 +93,53 @@ def main():
             color_list = ["red", "orange", "yellow", "lawn green", "green", "blue", "cyan", "indigo", "magenta2"]
             if index < len(rainbow_text):
                 color = color_list[index % len(color_list)]
-                canvas.itemconfigure(text_id, text='')
+                canvas.itemconfigure("Text", text='')
                 r_text = rainbow_text[index]
-                text_id == canvas.create_text(490 + ((index + 1) *60), 840, text=r_text, fill=color, font=("DotumChe", 48), anchor="c", tags=(index))
+                text_id == canvas.create_text(490 + ((index + 1) *60), 840, text=r_text, fill=color, font=("DotumChe", 48, "bold"), anchor="c", tags=(index))
                 canvas.after(delay, lambda: rainbow_end_text(event, letter_index, index+1, color_index+1))
             if index >= len(rainbow_text):
                 if color_index >= len(color_list):
                     color_index = 0
-                if (letter_index - 1) > len(rainbow_text):
-                    letter_index = 1
+                if (letter_index-2) > len(rainbow_text):
+                    letter_index = 3
                 if canvas.itemcget(index, 'text') == ' ':
                     letter_index += 1
                 color2 = color_list[color_index]
-                canvas.itemconfigure(letter_index, fill=color2)
+                canvas.itemconfigure(letter_index + 1, fill=color2)
                 canvas.after(delay2, lambda: rainbow_end_text(event, letter_index+1, index, color_index+1))
-        
     
-    root.bind('<Escape>', commit_fullscreen)
-    root.bind('<a>', type_text)
-    root.bind('<d>', lambda event: phase_change(event, bg_image, keep_image))
-    root.bind('<b>', rainbow_end_text)
+    def increase_round(event):
+        current_round = rnd_index_tk.get()
+        current_round += 1
+        canvas.itemconfigure("Round", text=current_round)
+        rnd_index_tk.set(current_round)
+
+    def decrease_round(event):
+        current_round = rnd_index_tk.get()
+        current_round -= 1
+        canvas.itemconfigure("Round", text=current_round)
+        rnd_index_tk.set(current_round)
+
+    def hide_round(event):
+        current_round = rnd_index_tk.get()
+        if canvas.itemcget("Round", 'text') == '':
+            canvas.itemconfigure("Round", text=current_round)
+        else:
+            canvas.itemconfigure("Round", text='')
+
+    def exit_event(event):
+        sys.exit(0)  
+    
+    root.bind('<Tab>', commit_fullscreen)
+    root.bind('<Return>', type_text)
+    root.bind('<space>', lambda event: phase_change(event, bg_image, keep_image))
+    root.bind('<Key-backslash>', rainbow_end_text)
+    root.bind('<Escape>', exit_event)
+    root.bind('<Shift_R>', increase_round)
+    root.bind('<BackSpace>', decrease_round)
+    root.bind('<Control_R>', hide_round)
     
     root.mainloop()
 
-
 if __name__ == "__main__":
     main()
-
-
-
-
-
