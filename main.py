@@ -17,7 +17,7 @@ def main():
     image = Image.open('Phases/Phase_1.png')
     resized_image = image.resize((1920, 1080), Image.LANCZOS)
     bg_image = ImageTk.PhotoImage(resized_image)
-    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+    background_image_id = canvas.create_image(0, 0, image=bg_image, anchor="nw")
     root.update_idletasks
     text_id = canvas.create_text(960, 840, text="", font=("Arial", 24), fill="white", anchor='c')
     file = open('Phases/Phase_1.txt')
@@ -27,6 +27,7 @@ def main():
     txt_index_tk.set(0)
     rb_index_tk = tk.IntVar()
     rb_index_tk.set(0)
+    keep_image = []
 
     def type_text(event, index=0):
         delay = 100
@@ -37,7 +38,7 @@ def main():
             txt_index_tk.set(0)
             txt_index = 0
         new_text = full_text[txt_index]
-        text_to_input = new_text.replace('(', '').replace(')', '').replace("'", '').strip("\\n")
+        text_to_input = new_text.replace('(', '').replace('"', '').replace(')', '').replace("'", '').strip("\\n")
         if index == len(text_to_input):
             txt_index += 1
             txt_index_tk.set(txt_index)
@@ -48,15 +49,23 @@ def main():
             canvas.after(delay, lambda: type_text(event, index+1))
             
 
-    def phase_change(event):
+    def phase_change(event, bg_image, keep_image):
         phase = phase_tk.get()
         phase += 1
+        super_image = bg_image
         new_file_text = f"Phases/Phase_{phase}.txt"
         if os.path.exists(f"Phases/Phase_{phase}.txt"):
             phase_tk.set(phase)
             txt_index_tk.set(0)
             new_file = open(f"Phases/Phase_{phase}.txt")
             full_text_tk.set(new_file.readlines())
+            image = Image.open(f"Phases/Phase_{phase}.png")
+            resized_image = image.resize((1920, 1080), Image.LANCZOS)
+            new_bg_image = ImageTk.PhotoImage(resized_image)
+            canvas.itemconfigure(background_image_id, image=new_bg_image)
+            keep_image.append(new_bg_image)
+            bg_image = new_bg_image
+
 
         else:
             full_text_tk.set('You have emerged victorious!')
@@ -73,8 +82,7 @@ def main():
         if root.attributes('-fullscreen') == False:
             root.attributes('-fullscreen', True)
 
-
-    def rainbow_end_text(event, letter_index=0, index=0, color_index=0):
+    def rainbow_end_text(event, letter_index=1, index=0, color_index=0):
         delay = 100
         delay2 = 50
         if os.path.exists('Phases/rainbow_text.txt'):
@@ -93,17 +101,17 @@ def main():
                 if color_index >= len(color_list):
                     color_index = 0
                 if (letter_index - 1) > len(rainbow_text):
-                    letter_index = 0
+                    letter_index = 1
                 if canvas.itemcget(index, 'text') == ' ':
                     letter_index += 1
                 color2 = color_list[color_index]
-                canvas.itemconfigure(letter_index + 1, fill=color2)
+                canvas.itemconfigure(letter_index, fill=color2)
                 canvas.after(delay2, lambda: rainbow_end_text(event, letter_index+1, index, color_index+1))
         
     
     root.bind('<Escape>', commit_fullscreen)
     root.bind('<a>', type_text)
-    root.bind('<d>', phase_change)
+    root.bind('<d>', lambda event: phase_change(event, bg_image, keep_image))
     root.bind('<b>', rainbow_end_text)
     
     root.mainloop()
