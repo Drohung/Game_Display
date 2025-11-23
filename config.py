@@ -1,0 +1,9 @@
+delay = 100
+width = 1920
+height = 1080
+center_w = width/2
+center_h = height/2
+text_h = height / 5 * 4
+r_text_point = 490
+text_color = "white"
+round_color = "grey"
