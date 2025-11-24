@@ -11,7 +11,7 @@ Controls are mapped as follows:
 Tab - enable or disable fullscreen
 Return - Next text line
 Space Bar - Phase change
-Left Shift - Rainbow Text Activation (replaces Next text line entirely)
+Left Shift - Rainbow Text Activation (replaces and locks "Next text line" entirely, only able to be used during the final phase)
 Right Shift - increase round
 Back Space - Decrease round
 Right Control - enable or disable round visibility

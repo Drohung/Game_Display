@@ -5,5 +5,5 @@ center_w = width/2
 center_h = height/2
 text_h = height / 5 * 4
 r_text_point = 490
-text_color = "white"
-round_color = "grey"
+text_color = "gray69"
+round_color = "gray"

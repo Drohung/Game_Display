@@ -42,6 +42,9 @@ def main():
     keep_image = []
 
     def type_text(event, index=0):
+        root.unbind('<Return>')
+        root.unbind('<space>')
+        root.unbind('<Shift_L>')
         config.delay
         txt_index = txt_index_tk.get()
         full_text_fill = full_text_tk.get()
@@ -54,6 +57,9 @@ def main():
         if index == len(text_to_input):
             txt_index += 1
             txt_index_tk.set(txt_index)
+            root.bind('<Return>', type_text)
+            root.bind('<Shift_L>', rainbow_end_text)
+            root.bind('<space>', lambda event: phase_change(event, bg_image, keep_image))
         if index < len(text_to_input):
             current_text = ""
             current_text += text_to_input[:index+1]
@@ -78,7 +84,7 @@ def main():
             bg_image = new_bg_image
 
         else:
-            full_text_tk.set('You have emerged victorious!')
+            root.bind('<Shift_L>', rainbow_end_text)
     
     def key_press(event):
         lambda event: type_text(event, new_text, full_text)
@@ -94,6 +100,7 @@ def main():
 
     def rainbow_end_text(event, letter_index=3, index=0, color_index=0):
         root.unbind('<Return>')
+        root.unbind('<Shift_L>')
         config.delay
         delay2 = 60
         if os.path.exists(f"{file_dir}Phases/rainbow_text.txt"):
@@ -101,7 +108,7 @@ def main():
             rainbow_list = rainbow_txt.readlines()
             rainbow_line = str(rainbow_list[0])
             rainbow_text = rainbow_line.replace('(', '').replace(')', '').replace("'", '').strip("\\n")
-            color_list = ["red", "orange", "yellow", "lawn green", "green", "blue", "cyan", "indigo", "magenta2"]
+            color_list = ["red", "orange", "yellow", "lawn green", "green", "SeaGreen1", "cyan", "blue", "indigo", "magenta2", "DeepPink2"]
             if index < len(rainbow_text):
                 color = color_list[index % len(color_list)]
                 canvas.itemconfigure("Text", text='')
@@ -144,7 +151,6 @@ def main():
     root.bind('<Tab>', commit_fullscreen)
     root.bind('<Return>', type_text)
     root.bind('<space>', lambda event: phase_change(event, bg_image, keep_image))
-    root.bind('<Shift_L>', rainbow_end_text)
     root.bind('<Escape>', exit_event)
     root.bind('<Shift_R>', increase_round)
     root.bind('<BackSpace>', decrease_round)
