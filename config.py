@@ -1,9 +1,10 @@
 delay = 100
 width = 1920
 height = 1080
+rainbow_spacing = width/32
 center_w = width/2
 center_h = height/2
 text_h = height / 5 * 4
-r_text_point = 490
+r_text_point = rainbow_spacing * 8.15
 text_color = "gray69"
 round_color = "gray"

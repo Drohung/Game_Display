@@ -44,7 +44,6 @@ def main():
     def type_text(event, index=0):
         root.unbind('<Return>')
         root.unbind('<space>')
-        root.unbind('<Shift_L>')
         config.delay
         txt_index = txt_index_tk.get()
         full_text_fill = full_text_tk.get()
@@ -58,7 +57,6 @@ def main():
             txt_index += 1
             txt_index_tk.set(txt_index)
             root.bind('<Return>', type_text)
-            root.bind('<Shift_L>', rainbow_end_text)
             root.bind('<space>', lambda event: phase_change(event, bg_image, keep_image))
         if index < len(text_to_input):
             current_text = ""
@@ -113,7 +111,7 @@ def main():
                 color = color_list[index % len(color_list)]
                 canvas.itemconfigure("Text", text='')
                 r_text = rainbow_text[index]
-                text_id == canvas.create_text(config.r_text_point + ((index + 1) *60), config.text_h, text=r_text, fill=color, font=("DotumChe", 48, "bold"), anchor="c", tags=(index))
+                text_id == canvas.create_text(config.r_text_point + ((index + 1) * config.rainbow_spacing), config.text_h, text=r_text, fill=color, font=("DotumChe", 48, "bold"), anchor="c", tags=(index))
                 canvas.after(config.delay, lambda: rainbow_end_text(event, letter_index, index+1, color_index+1))
             if index >= len(rainbow_text):
                 if color_index >= len(color_list):
